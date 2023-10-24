@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import "./App.css";
 import { useState } from "react";
 import axios from 'axios'
+import PokeCard from "./components/PokeCard";
 
 function App() {
 
@@ -11,12 +12,12 @@ function App() {
     fetchPokeData();
   },[]);
 
-const url = "https://pokeapi.co/api/v2/pokemon/?limit=1008&offset=0";
+const url = "https://pokeapi.co/api/v2/pokemon/?limit=10&offset=0";
 
   const fetchPokeData = async() => {
     try {
       const response = await axios.get(url)
-      console.log(response.data.results)
+      // console.log(response.data.results)
       setPokemons(response.data.results)
     } catch(error) {
       console.error(error);
@@ -24,7 +25,7 @@ const url = "https://pokeapi.co/api/v2/pokemon/?limit=1008&offset=0";
   };
 
   return (
-    <argicle className="pt-6">
+    <article className="pt-6">
       <header className="flex flex-col justify-content items-center overflow-auto z-0">
         {/* {Input Form 부분} */}
         input form
@@ -33,9 +34,7 @@ const url = "https://pokeapi.co/api/v2/pokemon/?limit=1008&offset=0";
         <div className="flex flex-row flex-wrap gap-[16px] items-center justify-center px-2 max-w-4xl">
           {pokemons.length > 0 ? (
             pokemons.map(({url, name}, index) =>(
-              <div key={index}>
-                {name}
-              </div>
+                <PokeCard key={url} url={url} name={name}/>
             ))
           ) : (
             <h2 className="font-medium text-lg text-slate-900 mb-1">
@@ -44,7 +43,7 @@ const url = "https://pokeapi.co/api/v2/pokemon/?limit=1008&offset=0";
           )}
         </div>
       </section>
-    </argicle>
+    </article>
 
   );
 }
