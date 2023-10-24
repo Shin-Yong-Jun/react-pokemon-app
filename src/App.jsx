@@ -7,18 +7,23 @@ import PokeCard from "./components/PokeCard";
 function App() {
 
   const [pokemons, setPokemons] = useState([]);
+  //더보기 기능을 위한 offset(몇번째부터 시작?) / limit (몇개까지 노출)
+  const [offset, setOffset] = useState(0);
+  const [limit, setLimit] = useState(20);
 
   useEffect(() => {
-    fetchPokeData();
+    fetchPokeData(true);
   },[]);
-
-const url = "https://pokeapi.co/api/v2/pokemon/?limit=10&offset=0";
-
-  const fetchPokeData = async() => {
+  
+  const fetchPokeData = async(isFirstFetch) => {
     try {
+      const offsetValue = isFirstFetch ? 0 : offset + limit; 
+      const url = `https://pokeapi.co/api/v2/pokemon/?limit=${limit}&offset=${offsetValue}`;
+
       const response = await axios.get(url)
       // console.log(response.data.results)
-      setPokemons(response.data.results)
+      setPokemons([...pokemons, ...response.data.results])
+      setOffset(offsetValue);
     } catch(error) {
       console.error(error);
     }
@@ -43,6 +48,13 @@ const url = "https://pokeapi.co/api/v2/pokemon/?limit=10&offset=0";
           )}
         </div>
       </section>
+            <div className="text-center">
+              <button
+                onClick={()=>fetchPokeData(false)}
+                className="bg-slate-800 px-6 py-2 my-4 text-base rounded-lg font-bold text-white">
+                더 보기
+              </button>
+            </div>
     </article>
 
   );
