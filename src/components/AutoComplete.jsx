@@ -56,7 +56,7 @@ const AutoComplete = ({allPokemons, setDisplayedPokemons}) => {
             className={
               `w-0 h-0 bottom-0 border-x-transparent border-x-8 border-b-[8px] border-gray-700 -translate-y-1/2`
             }
-          >{test}
+          >
           </div>
 
           <ul
