@@ -2,7 +2,9 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Lazyimage from "./Lazyimage";
 
+
 const PokeCard = ({ url, name }) => {
+
   const [pokemon, setPokemon] = useState();
   useEffect(() => {
     fetchPokeDetailData();
@@ -39,8 +41,6 @@ const PokeCard = ({ url, name }) => {
 
   return (
     <>
-
-
       {pokemon && (
         <a
           href={`/pokemon.${name}`}
