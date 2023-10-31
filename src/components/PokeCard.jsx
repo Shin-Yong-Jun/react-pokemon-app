@@ -61,7 +61,7 @@ const PokeCard = ({ url, name }) => {
             </div>
           </div>
           <div 
-            className={`${bg} text-xs text-zinc-100 h-[1.5rem] rounded-b-lg uppercase font-medium pt-0.5`}
+            className={`${bg} text-center text-xs text-zinc-100 h-[1.5rem] rounded-b-lg uppercase font-medium pt-0.5`}
           >
             {pokemon.name}
           </div>
