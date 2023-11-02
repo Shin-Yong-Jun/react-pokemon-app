@@ -1,8 +1,12 @@
 import axios from 'axios';
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 const DetailPage = () => {
+
+  //
+  const [pokemon, setPokemon] = useState();
+  const [isLoading, setIsLoading] = useState(true);
 
   const params = useParams();
   const pokemonId = params.id;
@@ -17,26 +21,67 @@ const DetailPage = () => {
   async function fetchPokemonData() {
   const url = `${baseUrl}${pokemonId}`
   try {
-    // 이걸 resopnse로 받게 되면 response.data 로 받게 되는데
-    // 애초부터 data만 받으려면 아래와 같이 {data}로 디스트럭쳐링하면 된다.
-    // 그리고 이렇게 data로 받아올때 pokemonData라는 이름으로 받아오게끔 :pokemonData처리하기
-    // const response = await axios.get(url);
     const {data: pokemonData} = await axios.get(url);
-    // console.log(pokemonData);
 
-    // 이제 해당 데이터의 세부데이터들을 각각 변수에 담아서 추출하는 것과 이전, 다음 포켓몬 데이터 id 함수호출 하는걸 구현함
     if(pokemonData) {
-      // 아래 각 항목별 데이터는 그냥 보여줄수 없고 가공해서 보여줘야 한다. 
       const {name, id, types, weight, height, stats, abilities} = pokemonData;
-      console.log(name, id, types, weight, height, stats, abilities);
       const nextAndPreviousPokemon = await getNextAndPreviousPokemon(id);
-      console.log(nextAndPreviousPokemon);
+
+      // Promise.all 따로 공부하기
+      const DamageRelations = await Promise.all(
+        types.map(async(i) => {
+
+          const type = await axios.get(i.type.url);
+          return type.data.damage_relations
+        })
+      )
+
+      const formattedPokemonData = {
+        id,
+        name,
+        weight: weight / 10,
+        height: height / 10,
+        previous: nextAndPreviousPokemon.previous,
+        next: nextAndPreviousPokemon.next,
+        abilities: formatPokemonAbilities(abilities),
+        stats: formatPokemonStats(stats),
+        DamageRelations
+      }
+
+      setPokemon(formattedPokemonData);
+      setIsLoading(false);
     }
+
 
   } catch (error) {
     console.error(error);
   }
 }
+
+
+  // 포켓몬 기술나열 포맷함수 정의
+  const formatPokemonAbilities = (abilities) => {
+    return abilities.filter((_, index) => index <= 1)
+                    .map((obj) => obj.ability.name.replaceAll('-', ' '))
+  }
+
+  // 포켓몬 스탯 표시하기
+  const formatPokemonStats = ([
+    statHP,
+    statATK,
+    statDEP,
+    statSATK,
+    statSDEF,
+    statSPD
+  ]) => [
+    {name: 'Hit Point', baseStat: statHP.base_stat},
+    {name: 'Attack', baseStat: statATK.base_stat},
+    {name: 'Defense', baseStat: statDEP.base_stat},
+    {name: 'Special Attack', baseStat: statSATK.base_stat},
+    {name: 'Special Defense', baseStat: statSDEF.base_stat},
+    {name: 'Speed', baseStat: statSPD.base_stat},
+  ]
+  
 
   //여기서 이전 다음 포켓몬 데이터 준비하는 함수 구현
   async function getNextAndPreviousPokemon(id) {
@@ -56,6 +101,8 @@ const DetailPage = () => {
     }
   }
 
+
+  if(isLoading) return <div>...loading</div>
 
   return (
     <div>DetailPage</div>
