@@ -7,6 +7,7 @@ import { GreaterThan } from "../../assets/GreaterThan";
 import { ArrowLeft } from "../../assets/ArrowLeft";
 import { Balance } from "../../assets/Balance";
 import { Vector } from "../../assets/Vector";
+import Type from "../../components/Type";
 
 const DetailPage = () => {
   //
@@ -176,7 +177,10 @@ const DetailPage = () => {
         {/* 중간부분  */}
         <section className="w-full min-h-[65%] h-full bg-gray-800 z-10 pt-14 flex flex-col items-center gap-3 px-5 pb-4">
           <div className="flex items-center justify-center gap-4">
-            {/* 포켓몬 타입 */}
+            {/* 포켓몬 타입 태그_컴포넌트 새로 만들어서 적용 */}
+            {pokemon.types.map((type) => (
+              <Type key={type} type={type}/>
+            ))}
           </div>
 
           <h2 className={`text-base font-semibold ${text}`}>
@@ -217,8 +221,25 @@ const DetailPage = () => {
           </div>
 
           <h2 className={`text-base font-semibold ${text}`}>
-            정보
+            기본 능력치
           </h2>
+          
+          <div className="w-full">
+            Stat
+          </div>
+
+          {/* 데미지 게이지 */}
+          {pokemon.DamageRelations && (
+            <div className="w-10/12">
+              <h2 className={`text-base text-center font-semibold ${text}`}>
+                데미지 관계
+              </h2>
+              데미지
+
+
+            </div>
+
+          )}
 
 
 
