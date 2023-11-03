@@ -9,7 +9,7 @@ const BaseStat = ({valueStat, nameStat, type}) => {
     const setValueStat = ref.current;
     const calc = valueStat * (100/255);
     setValueStat.style.width = calc + '%';
-  }, [])
+  }, [valueStat])
   
 
   return (
