@@ -21,7 +21,7 @@ const DetailPage = () => {
 
   useEffect(() => {
     fetchPokemonData();
-  }, []);
+  }, [pokemon]);
 
   async function fetchPokemonData() {
     const url = `${baseUrl}${pokemonId}`;
