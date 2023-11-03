@@ -1,7 +1,16 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 
 const BaseStat = ({valueStat, nameStat, type}) => {
   const bg = `bg-${type}`;
+
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const setValueStat = ref.current;
+    const calc = valueStat * (100/255);
+    setValueStat.style.width = calc + '%';
+  }, [])
+  
 
   return (
     <tr className='w-full text-white'>
@@ -13,7 +22,8 @@ const BaseStat = ({valueStat, nameStat, type}) => {
             `flex items-start h-2 min-w-[10rem] overflow-hidden rounded bg-gray-600`
           }
         >
-          <div className={`h-3 ${bg}`}></div>
+          {/* 여기에 useRef로 실제 색깔게이지 반영하기 */}
+          <div ref={ref} className={`h-3 ${bg}`}></div>
         </div>
       </td>
       <td className='px-2 sm:px-5'>255</td>
