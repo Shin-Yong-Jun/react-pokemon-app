@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import Test1ChildComponent from './Test1ChildComponent';
 
 function Test1() {
 
@@ -15,8 +16,8 @@ function Test1() {
     renderCountRef.current++;
   })
   
-
-
+  
+  
   function increaseRef() {
     countRef.current++;
     console.log("Ref + :", countRef.current);
@@ -29,6 +30,12 @@ function Test1() {
   function increaseVariable() {
     countVariable++;
     console.log("Var + :", countVariable);
+  }
+  
+  // inputRef테스트
+  const inputRef = useRef();
+  const handleClick = () => {
+    inputRef.current.focus();
   }
 
   return (
@@ -47,6 +54,11 @@ function Test1() {
           <button className='bg-slate-400 rounded-sm px-2 py-2 mx-2 my-2' onClick={increaseRef}>Ref +</button>
           <button className='bg-slate-400 rounded-sm px-2 py-2 mx-2 my-2' onClick={increaseState}>State +</button>
           <button className='bg-slate-400 rounded-sm px-2 py-2 mx-2 my-2' onClick={increaseVariable}>Variable +</button>
+        </div>
+
+        <div>
+          <Test1ChildComponent ref={inputRef} />
+          <button className='bg-slate-400 rounded-sm px-2 py-2 mx-2 my-2' onClick={handleClick}>검색</button>
         </div>
       </header>
 
