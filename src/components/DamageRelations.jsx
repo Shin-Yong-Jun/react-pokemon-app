@@ -1,8 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 // 백엔드 데이터 1차 가공!
 // 데이터 받아오고 -> To와 From을 나눠주기 함수 -> 검색한 단어의 데이터를 [key, value] 방식으로 골라주는 함수
 const DamageRelations = ({ damages }) => {
+
+  // 지금까지 잘 정돈한 데이터를 저장할 변수 state
+  const [damagePokemonForm, setDamagePokemonForm] = useState();
+
+
   useEffect(() => {
     const arrayDamage = damages.map((damage) =>
       // 1차 가공
@@ -13,10 +18,10 @@ const DamageRelations = ({ damages }) => {
     if (arrayDamage.length === 2) {
       //합치는 부분
       const obj = joinDamageRelations(arrayDamage);
-      console.log(obj);
+      setDamagePokemonForm(reduceDuplicateValues(postDamageValue(obj.from)));
 
     } else {
-      postDamageValue(arrayDamage[0].from);
+      setDamagePokemonForm(postDamageValue(arrayDamage[0].from));
     }
   }, []);
 
@@ -27,6 +32,44 @@ const DamageRelations = ({ damages }) => {
     };
   };
 
+  const reduceDuplicateValues = (props) => {
+    const duplicateValues = {
+      double_damage: '4x',
+      half_damage: '1/4x',
+      no_damage: '0x'
+    }
+
+    return Object.entries(props)
+      .reduce((acc, [keyName, value]) => {
+        const key = keyName;
+
+        const verifiedValue = filterForUniqueValues(
+          value,
+          duplicateValues[key]
+        )
+        return (acc = {[keyName]: verifiedValue, ...acc});
+      }, {})
+  }
+
+  // 먼저 중복되는거 안보이게 하는 함수부터! 4배하기 전에!
+  const filterForUniqueValues = (valueForFiltering, damageValue) => {
+
+    return valueForFiltering.reduce((acc, currentValue) => {
+
+      //아래가 디스트럭쳐링 쪼개는 코드! 
+      const { url, name } = currentValue;
+
+      // 중복 안되는 특성만 넣어주기
+      const filterACC = acc.filter((a) => a.name !== name);
+
+      // 중복이 없었을 경우
+      return filterACC.length === acc.length
+      ? (acc = [currentValue, ...acc])
+      : (acc = [{damageValue: damageValue, name, url}, ...filterACC])
+    }, [])
+  }
+
+
   const joinObjects = (props, string) => {
     const key = string;
     const firstArrayValue = props[0][key];
@@ -36,7 +79,6 @@ const DamageRelations = ({ damages }) => {
     // 여기가 실제로 합쳐지는 곳
     const result = Object.entries(secondArrayValue).reduce(
       (acc, [keyName, value]) => {
-        // console.log(acc, [keyName, value]);
 
         // secondArrayValue의 value를 firstArrayValue에 합친다.
         const result = firstArrayValue[keyName].concat(value);
@@ -66,8 +108,7 @@ const DamageRelations = ({ damages }) => {
         ...acc,
       });
     }, {});
-
-    console.log(result);
+    return result
   };
 
   const seperateObjectBetweenToAndFrom = (damage) => {
