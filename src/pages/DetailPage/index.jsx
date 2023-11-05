@@ -9,6 +9,7 @@ import { Balance } from "../../assets/Balance";
 import { Vector } from "../../assets/Vector";
 import Type from "../../components/Type";
 import BaseStat from "../../components/BaseStat";
+import DamageRelations from "../../components/DamageRelations";
 
 const DetailPage = () => {
   //
@@ -41,13 +42,6 @@ const DetailPage = () => {
           })
         );
 
-        // 바로 이렇게 하면 에러난다. 
-        // 그냥 pokemon을 출력하면 undefined가 나온다.
-        // 언디파인드인데 데메지 릴레이션을 가져오려니 에러가 발생
-        // pokemon에 값이 있을때만 출력하면 정상출력
-        console.log(pokemon?.DamageRelations);
-
-
         const formattedPokemonData = {
           id,
           name,
@@ -69,6 +63,13 @@ const DetailPage = () => {
       setIsLoading(false);
     }
   }
+
+        // 바로 이렇게 하면 에러난다. 
+        // 그냥 pokemon을 출력하면 undefined가 나온다.
+        // 언디파인드인데 데메지 릴레이션을 가져오려니 에러가 발생
+        // pokemon에 값이 있을때만 출력하기 위한 옵셔널? 쓰면 정상출력
+        // console.log(pokemon?.DamageRelations)
+
 
   // 포켓몬 기술나열 포맷함수 정의
   const formatPokemonAbilities = (abilities) => {
@@ -131,7 +132,7 @@ const DetailPage = () => {
 
 
 
-  console.log(pokemon.stats);
+  // console.log(pokemon.stats);
 
 
   return (
@@ -258,7 +259,9 @@ const DetailPage = () => {
           {pokemon.DamageRelations && (
             <div className="w-10/12">
               <h2 className={`text-base text-center font-semibold ${text}`}>
-                데미지 관계
+                <DamageRelations 
+                  damages={pokemon.DamageRelations}
+                />
               </h2>
               데미지
 
