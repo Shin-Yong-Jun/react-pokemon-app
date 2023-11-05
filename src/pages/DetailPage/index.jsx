@@ -21,7 +21,7 @@ const DetailPage = () => {
 
   useEffect(() => {
     fetchPokemonData();
-  }, [pokemon]);
+  }, []);
 
   async function fetchPokemonData() {
     const url = `${baseUrl}${pokemonId}`;
@@ -40,6 +40,13 @@ const DetailPage = () => {
             return type.data.damage_relations;
           })
         );
+
+        // 바로 이렇게 하면 에러난다. 
+        // 그냥 pokemon을 출력하면 undefined가 나온다.
+        // 언디파인드인데 데메지 릴레이션을 가져오려니 에러가 발생
+        // pokemon에 값이 있을때만 출력하면 정상출력
+        console.log(pokemon?.DamageRelations);
+
 
         const formattedPokemonData = {
           id,
