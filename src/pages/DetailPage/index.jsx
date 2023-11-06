@@ -263,7 +263,6 @@ const DetailPage = () => {
                   damages={pokemon.DamageRelations}
                 />
               </h2>
-              데미지
 
 
             </div>

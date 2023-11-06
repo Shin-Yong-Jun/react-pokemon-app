@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Type from "./Type";
 
 // 백엔드 데이터 1차 가공!
 // 데이터 받아오고 -> To와 From을 나눠주기 함수 -> 검색한 단어의 데이터를 [key, value] 방식으로 골라주는 함수
@@ -134,7 +135,49 @@ const DamageRelations = ({ damages }) => {
     return result;
   };
 
-  return <div>DamageRelations</div>;
+  return (
+    <div className="flex gap-2 flex-col">
+      {damagePokemonForm ? (
+        <>
+          {Object.entries(damagePokemonForm)
+            .map(([keyName, value]) => {
+              const key = keyName;
+              const valuesOfKeyName = {
+                double_damage: 'Weak',
+                half_damage: 'Resistant',
+                no_damage: 'Immune'
+              }
+
+              return(
+                <div key={key}>
+                  <h3 className="capitalize font-medium text-sm md:text-base text-slate-500 text-center">
+                    {valuesOfKeyName[key]}
+                  </h3>
+                  <div className="flex flex-wrap gap-1 justify-center">
+                    {value.length > 0 ? (
+                      value.map(({name, url, damageValue}) => {
+                        return (
+                          <Type
+                            type={name}
+                            key={url}
+                            damageValue={damageValue}
+                          />
+                        )
+                      })
+                    ) : (
+                      <Type type={'none'} key={'none'} />
+
+                    )}
+                  </div>
+                </div>
+              )
+            })}
+        
+        </>
+      ) : <div></div>}
+    </div>
+
+  )
 };
 
 export default DamageRelations;
