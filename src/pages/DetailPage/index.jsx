@@ -15,7 +15,7 @@ import DamageModal from "../../components/DamageModal";
 const DetailPage = () => {
   //
   const [pokemon, setPokemon] = useState();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   // 모달창
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -24,6 +24,7 @@ const DetailPage = () => {
   const baseUrl = `https://pokeapi.co/api/v2/pokemon/`;
 
   useEffect(() => {
+    setIsLoading(true);
     fetchPokemonData(pokemonId);
   }, [pokemonId]);
 
