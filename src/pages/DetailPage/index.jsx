@@ -293,6 +293,13 @@ const DetailPage = () => {
             </table>
           </div>
 
+          <h2 className={`text-base font-semibold ${text}`}>
+            설명
+          </h2>
+          <p className="text-md leading-4 font-sans text-zinc-200 max-w-[30rem] text-center">
+            {pokemon.describtion}
+          </p>
+
           <div className="flex my-8 flex-wrap justify-center">
             {pokemon.sprites.map((url, index) => (
               <img 
