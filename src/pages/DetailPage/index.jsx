@@ -33,7 +33,7 @@ const DetailPage = () => {
       const { data: pokemonData } = await axios.get(url);
 
       if (pokemonData) {
-        const { name, id, types, weight, height, stats, abilities } =
+        const { name, id, types, weight, height, stats, abilities, sprites } =
           pokemonData;
         const nextAndPreviousPokemon = await getNextAndPreviousPokemon(id);
 
@@ -56,7 +56,11 @@ const DetailPage = () => {
           stats: formatPokemonStats(stats),
           DamageRelations,
           types: types.map((type) => type.type.name),
+          sprites: formatPokemonSprites(sprites),
+          //await을 넣어줘야 데이터가 다 들어오는걸 기다린 다음에 반영시키는 것!
+          describtion: await getPokemonDescribtion(id)
         };
+        console.log(formattedPokemonData)
 
         setPokemon(formattedPokemonData);
         setIsLoading(false);
@@ -67,12 +71,50 @@ const DetailPage = () => {
     }
   }
 
-        // 바로 이렇게 하면 에러난다. 
-        // 그냥 pokemon을 출력하면 undefined가 나온다.
-        // 언디파인드인데 데메지 릴레이션을 가져오려니 에러가 발생
-        // pokemon에 값이 있을때만 출력하기 위한 옵셔널? 쓰면 정상출력
-        // console.log(pokemon?.DamageRelations)
+  // 바로 이렇게 하면 에러난다.
+  // 그냥 pokemon을 출력하면 undefined가 나온다.
+  // 언디파인드인데 데메지 릴레이션을 가져오려니 에러가 발생
+  // pokemon에 값이 있을때만 출력하기 위한 옵셔널? 쓰면 정상출력
+  // console.log(pokemon?.DamageRelations)
 
+
+
+  // 포켓몬 설명 describtion
+  //한국말 설명만 필터링하기 (근데 한국어설명도 동일포켓몬에 꽤 여러가지다! 포켓몬게임 버전때문에.)
+  const filterAndFormatDescribtion = (flavorText) => {
+    const koreanDescribtions = flavorText
+      ?.filter((text) => text.language.name === "ko")
+      .map((text) => text.flavor_text.replace(/\r|\n|\f/g, ' '))
+
+      return koreanDescribtions
+    }
+
+
+  const getPokemonDescribtion = async (id) => {
+    const url = `https://pokeapi.co/api/v2/pokemon-species/${id}/`
+
+    const {data: pokemonSpecies} = await axios.get(url);
+    console.log(pokemonSpecies);
+
+    const describtions = filterAndFormatDescribtion(pokemonSpecies.flavor_text_entries);
+
+    return describtions[Math.floor(Math.random() * describtions.length)];
+  }
+
+
+  // 포켓몬 썸네일 앞뒤 이미지 sprites
+  const formatPokemonSprites = (sprites) => {
+    // 원본유지
+    const newSprites = { ...sprites };
+
+    (Object.keys(newSprites).forEach(key => {
+      // url 문자열이 아닌 내용들은 안보이기
+      if(typeof newSprites[key] !== 'string') {
+        delete newSprites[key];
+      }
+    }));
+    return Object.values(newSprites);
+  };
 
   // 포켓몬 기술나열 포맷함수 정의
   const formatPokemonAbilities = (abilities) => {
@@ -133,10 +175,7 @@ const DetailPage = () => {
   const bg = `bg-${pokemon?.types?.[0]}`;
   const text = `text-${pokemon?.types?.[0]}`;
 
-
-
   // console.log(pokemon.stats);
-
 
   return (
     <article className="flex items-center gap-1 flex-col w-full">
@@ -187,7 +226,7 @@ const DetailPage = () => {
               loading="lazy"
               alt={pokemon.name}
               className={`object-contain h-full`}
-              onClick={()=>setIsModalOpen(true)}
+              onClick={() => setIsModalOpen(true)}
             />
           </div>
         </section>
@@ -197,13 +236,11 @@ const DetailPage = () => {
           <div className="flex items-center justify-center gap-4">
             {/* 포켓몬 타입 태그_컴포넌트 새로 만들어서 적용 */}
             {pokemon.types.map((type) => (
-              <Type key={type} type={type}/>
+              <Type key={type} type={type} />
             ))}
           </div>
 
-          <h2 className={`text-base font-semibold ${text}`}>
-            정보
-          </h2>
+          <h2 className={`text-base font-semibold ${text}`}>정보</h2>
 
           <div className="flex w-full items-center justify-between max-w-[400px] text-center">
             <div className="w-full">
@@ -239,48 +276,42 @@ const DetailPage = () => {
           </div>
 
           {/* 스탯 능력치 */}
-          <h2 className={`text-base font-semibold ${text}`}>
-            기본 능력치
-          </h2>
-          
+          <h2 className={`text-base font-semibold ${text}`}>기본 능력치</h2>
+
           <div className="w-full">
             <table>
               <tbody>
-                {pokemon.stats.map((stat)=> (
+                {pokemon.stats.map((stat) => (
                   <BaseStat
                     key={stat.name}
                     valueStat={stat.baseStat}
                     nameStat={stat.name}
                     type={pokemon.types[0]}
-                    />
-
+                  />
                 ))}
               </tbody>
             </table>
           </div>
 
-          {/* 데미지 게이지 */}
-          {/* {pokemon.DamageRelations && (
-            <div className="w-10/12">
-              <h2 className={`text-base text-center font-semibold ${text}`}>
-                <DamageRelations 
-                  damages={pokemon.DamageRelations}
-                />
-              </h2>
-
-
-            </div>
-
-          )} */}
-
-
+          <div className="flex my-8 flex-wrap justify-center">
+            {pokemon.sprites.map((url, index) => (
+              <img 
+                key={index}
+                src={url}
+                alt="sprites"
+              />
+            ))}
+            
+          </div>
 
         </section>
-
       </div>
-            {isModalOpen && <DamageModal 
-              setIsModalOpen={setIsModalOpen}
-              damages={pokemon.DamageRelations}/>}
+      {isModalOpen && (
+        <DamageModal
+          setIsModalOpen={setIsModalOpen}
+          damages={pokemon.DamageRelations}
+        />
+      )}
     </article>
   );
 };
