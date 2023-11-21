@@ -279,8 +279,8 @@ const DetailPage = () => {
           {/* 스탯 능력치 */}
           <h2 className={`text-base font-semibold ${text}`}>기본 능력치</h2>
 
-          <div className="w-full">
-            <table>
+          <div className="w-full ">
+            <table className="flex justify-center">
               <tbody>
                 {pokemon.stats.map((stat) => (
                   <BaseStat
