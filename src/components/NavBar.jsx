@@ -2,8 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components'
 // 구글 파이어베이스 관련
-import {getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged} from 'firebase/auth';
+import {getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut} from 'firebase/auth';
 import app from '../firebase';
+
+
+const initialUserData = localStorage.getItem('userData') ?
+  JSON.parse(localStorage.getItem('userData')) : {};
 
 const NavBar = () => {
 
@@ -11,6 +15,9 @@ const NavBar = () => {
   const auth = getAuth(app);
   const provider = new GoogleAuthProvider();
   const [show, setShow] = useState(false);
+
+  const [userData, setUserData] = useState(initialUserData);
+
   const {pathname} = useLocation();
   const navigate = useNavigate();
 
@@ -34,12 +41,11 @@ useEffect(() => {
   }, [pathname])
   
 
-
-
   const handleAuth = () => {
     signInWithPopup(auth, provider)
     .then(result => {
-      console.log(result)
+      setUserData(result.user);
+      localStorage.setItem("userData", JSON.stringify(result.user))
     })
     .catch(error => {
       console.error(error);
@@ -63,8 +69,15 @@ useEffect(() => {
     }
   }, [])
   
-
-
+  const handleLogout = () => {
+    signOut(auth)
+      .then(()=> {
+        setUserData({});
+    })
+    .catch(error => {
+      alert(error.message);
+    })
+  }
 
   return (
     <NavWrapper show={show}>
@@ -77,15 +90,66 @@ useEffect(() => {
       </Logo>
       {pathname === '/login' ? 
     (
-      <Login
-        onClick={handleAuth}
-      >
-        로그인</Login>
-    ) : null
-    }
+      <Login onClick={handleAuth}>로그인</Login>
+    ) : 
+      <SignOut>
+        <UserImg 
+          src={userData.photoURL}
+          alt="user photo"
+        />
+        <Dropdown>
+          <span onClick={handleLogout}> Sign Out </span>
+        </Dropdown>
+      </SignOut>
+  }
     </NavWrapper>
   )
 }
+
+
+const UserImg = styled.img`
+  border-radius: 50%;
+  width: 100%;
+  height: 100%;
+
+`
+
+
+
+const Dropdown = styled.div`
+  position: absolute;
+  top: 48px;
+  right: 0px;
+  background: rgb(19, 19, 19);
+  border: 1px solid rgba(151, 151, 151, 0.34);
+  border-radius: 4px;
+  box-shadow: rgba(0 0 0 / 50%) 0px 0px 18px 0px;
+  padding: 10px;
+  font-size: 14px;
+  letter-spacing: 3px;
+  width: 100px;
+  opacity: 0;
+  color: white;
+
+`
+
+const SignOut = styled.div`
+  position: relative;
+  height: 48px;
+  width: 48px;
+  display: flex;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    ${Dropdown} {
+      opacity: 1;
+      transition-duration: 1s;
+    }
+  }
+`
+
 
 const Login = styled.a`
   background-color: rgba(0,0,0,0.6);
@@ -96,6 +160,7 @@ const Login = styled.a`
   border-radius: 4px;
   transition: all 0.2s ease 0s;
   color:white;
+  cursor: pointer;
 
   &:hover {
     background-color: #f9f9f9;
