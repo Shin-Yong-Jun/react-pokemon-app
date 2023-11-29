@@ -6,4 +6,6 @@ const NavBar = () => {
   )
 }
 
+const NavWrapper = () = 
+
 export default NavBar 
