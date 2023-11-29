@@ -1,9 +1,33 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 const NavBar = () => {
+
+  const [show, setShow] = useState(false);
+  console.log(show)
+
+  const listener = () => {
+    if(window.scrollY > 50) {
+      setShow(true);
+    } else {
+      setShow(false);
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener('scroll', listener)
+  
+    return () => {
+      window.removeEventListener('scroll', listener)
+  
+    }
+  }, [])
+  
+
+
+
   return (
-    <NavWrapper>
+    <NavWrapper show={show}>
       <Logo>
         <Image 
           alt = "Poke Logo"
@@ -18,7 +42,7 @@ const NavBar = () => {
 const Image = styled.img`
   cursor: pointer;
   width: 100%;
-  
+
 `;
 
 
@@ -39,6 +63,7 @@ const NavWrapper = styled.nav`
   right: 0;
   height: 70px;
   display: flex;
+  background-color: ${props => props.show ? "#090b13" : "transparent"};
   justify-content: space-between;
   align-items: center;
   padding: 0 36px;
