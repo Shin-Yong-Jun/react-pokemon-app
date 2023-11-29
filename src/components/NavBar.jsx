@@ -1,10 +1,45 @@
 import React, { useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom';
 import styled from 'styled-components'
+// 구글 파이어베이스 관련
+import {getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged} from 'firebase/auth';
+import app from '../firebase';
 
 const NavBar = () => {
 
+
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
   const [show, setShow] = useState(false);
-  console.log(show)
+  const {pathname} = useLocation();
+  
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      console.log(user);
+      // if(user) {
+
+      // } else {
+
+      // }
+    })
+  
+    return () => {
+    }
+  }, [])
+  
+
+
+
+  const handleAuth = () => {
+    signInWithPopup(auth, provider)
+    .then(result => {
+      console.log(result)
+    })
+    .catch(error => {
+      console.error(error);
+    })
+  }
+
 
   const listener = () => {
     if(window.scrollY > 50) {
@@ -15,11 +50,10 @@ const NavBar = () => {
   }
 
   useEffect(() => {
-    window.addEventListener('scroll', listener)
+    window.addEventListener('scroll', listener);
   
     return () => {
-      window.removeEventListener('scroll', listener)
-  
+      window.removeEventListener('scroll', listener);
     }
   }, [])
   
@@ -35,7 +69,14 @@ const NavBar = () => {
           onClick = {() => (window.location.href = "/")}
           />
       </Logo>
-      <Login>로그인</Login>
+      {pathname === '/login' ? 
+    (
+      <Login
+        onClick={handleAuth}
+      >
+        로그인</Login>
+    ) : null
+    }
     </NavWrapper>
   )
 }
@@ -89,5 +130,7 @@ const NavWrapper = styled.nav`
   letter-spacing: 16px;
   z-index: 100;
   `
+// show prop 관련 응급처치
+NavWrapper.shouldForwardProp = prop => prop !== 'show';
 
 export default NavBar 
