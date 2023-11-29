@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components'
 // 구글 파이어베이스 관련
 import {getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged} from 'firebase/auth';
@@ -12,20 +12,26 @@ const NavBar = () => {
   const provider = new GoogleAuthProvider();
   const [show, setShow] = useState(false);
   const {pathname} = useLocation();
-  
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
+  const navigate = useNavigate();
+
+useEffect(() => {
+
+  const unsubscribe = onAuthStateChanged(auth, (user) => {
       console.log(user);
-      // if(user) {
-
-      // } else {
-
-      // }
+      if(!user) {
+        navigate("/login");
+      } else if (user && pathname === "/login") {
+        navigate("/");
+      }
     })
+
+    console.log(unsubscribe)
   
     return () => {
+      unsubscribe();
+
     }
-  }, [])
+  }, [pathname])
   
 
 
