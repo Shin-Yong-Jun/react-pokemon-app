@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import axios from 'axios'
 import PokeCard from "../../components/PokeCard";
 import AutoComplete from "../../components/AutoComplete";
+import { PokemonData, PokemonNameAndUrl } from "../../types/PokemonData";
 
 function MainPage() {
   // 모든 포켓몬 데이터를 가지고 있는 state
-  const [allPokemons, setAllPokemons] = useState([])
+  const [allPokemons, setAllPokemons] = useState<PokemonNameAndUrl[]>([])
   // 실제 리스트로 보여주는 포켓몬 데이터를 가지고 있는 state
-  const [displayedPokemons, setDisplayedPokemons] = useState([]);
+  const [displayedPokemons, setDisplayedPokemons] = useState<PokemonNameAndUrl[]>([]);
   //한번에 보여주는 포켓몬 수
   const limitNum = 20;
   const url = `https://pokeapi.co/api/v2/pokemon/?limit=1008&offset=0`;
@@ -18,17 +19,20 @@ function MainPage() {
   },[]);
   
   
-  const filterDisplayedPokemonData = (allPokemonsData, displayedPokemons = []) => {
+  const filterDisplayedPokemonData = (
+    allPokemonsData: PokemonNameAndUrl[], 
+    displayedPokemons: PokemonNameAndUrl[] = []
+    ) => {
     const limit = displayedPokemons.length + limitNum;
     // 모든 포켓몬 데이터에서 limitNum만큼 더 가져오기
-    const array = allPokemonsData.filter((pokemon, index) => index + 1 <= limit);
+    const array = allPokemonsData.filter((_, index) => index + 1 <= limit);
     return array;
   }
 
   const fetchPokeData = async() => {
     try {
       // 1008 포켓몬 데이터 받아오기
-      const response = await axios.get(url)
+      const response = await axios.get<PokemonData>(url)
       // 모든 포켓몬 데이터 기억하기
       setAllPokemons(response.data.results);
       // 실제 화면에 보여줄 포켓몬 리스트 기억하는 state
@@ -38,23 +42,6 @@ function MainPage() {
     }
   };
 
-  const handleSearchInput = async(searchTerm) => {
-    if(searchTerm.length > 0) {
-      try{
-        const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${searchTerm}`)
-        const pokemonData = {
-          url: `https://pokeapi.co/api/v2/pokemon/${response.data.id}`,
-          name: searchTerm
-        }
-        setDisplayedPokemons([pokemonData]);
-      } catch(error) {
-        setDisplayedPokemons([]);
-        console.error(error);
-      }
-    } else {
-      fetchPokeData(true);
-    }
-  }
 
 
   return (
@@ -68,7 +55,7 @@ function MainPage() {
       <section className="pt-6 flex flex-col justify-content items-center overflow-auto z-0">
         <div className="flex flex-row flex-wrap gap-[16px] items-center justify-center px-2 max-w-4xl">
           {displayedPokemons.length > 0 ? (
-            displayedPokemons.map(({url, name}, index) =>(
+            displayedPokemons.map(({url, name}: PokemonNameAndUrl) =>(
                 <PokeCard key={url} url={url} name={name}/>
             ))
           ) : (
