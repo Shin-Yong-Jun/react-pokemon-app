@@ -1,8 +1,9 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Lazyimage from "./Lazyimage";
 import { Link } from "react-router-dom";
 import { PokemonNameAndUrl } from "../types/PokemonData";
+import { PokemonDetail } from "../types/PokemonDetail";
 
 interface PokeData {
   id: number;
@@ -29,10 +30,9 @@ const PokeCard = ({ url, name } : PokemonNameAndUrl) => {
     }
   }
 
-  function formatPokemonData(params : any) {
-    console.log('*******',JSON.stringify(params))
+  function formatPokemonData(params : PokemonDetail) {
     const { id, types, name } = params;
-    const PokeData = {
+    const PokeData: PokeData = {
       id,
       name,
       type: types[0].type.name,
@@ -40,7 +40,6 @@ const PokeCard = ({ url, name } : PokemonNameAndUrl) => {
     return PokeData;
   }
 
-  console.log(pokemon);
 
   const bg = `bg-${pokemon?.type}`;
   const border = `border-${pokemon?.type}`;

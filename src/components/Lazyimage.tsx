@@ -1,8 +1,14 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-const Lazyimage = ({ url, alt }) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [opacity, setOpacity] = useState("opacity-0");
+interface LazyImageProps {
+  url: string;
+  alt: string;
+
+}
+
+const Lazyimage = ({ url, alt }: LazyImageProps) => {
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [opacity, setOpacity] = useState<string>("opacity-0");
 
   useEffect(() => {
     isLoading ? setOpacity("opacity-0") : setOpacity("opacity-100");
