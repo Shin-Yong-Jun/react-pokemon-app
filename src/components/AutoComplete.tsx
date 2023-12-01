@@ -1,16 +1,27 @@
 import React, { useState } from "react";
+import { PokemonNameAndUrl } from "../types/PokemonData";
 
-const AutoComplete = ({ allPokemons, setDisplayedPokemons }) => {
+interface AutoCompleteProps {
+  allPokemons: PokemonNameAndUrl[],
+  setDisplayedPokemons: React.Dispatch<React.SetStateAction<PokemonNameAndUrl[]>>
+
+}
+
+
+
+
+
+const AutoComplete = ({ allPokemons, setDisplayedPokemons }: AutoCompleteProps) => {
   const [searchTerm, setSearchTerm] = useState("");
 
   // 이게 실제 찾아주는 역할! include!
-  const filterNames = (Input) => {
+  const filterNames = (Input: string) => {
     const value = Input.toLowerCase();
     return value ? allPokemons.filter((e) => e.name.includes(value)) : [];
   };
 
   // 검색버튼을 누를때 실제 입력값이 포함된 데이터를 찾아주는 기능구현
-  function handleSubmit(e) {
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     let text = searchTerm.trim();
@@ -19,7 +30,7 @@ const AutoComplete = ({ allPokemons, setDisplayedPokemons }) => {
   }
 
   // 검색하는 것에 정확히 일치하는 포켓몬 이름이 있으면 autoComplete 영역 없애기
-  const checkEqualName = (input) => {
+  const checkEqualName = (input: string) => {
     const filteredArray = filterNames(input);
     // 배열로 구성되어있고 0번째 값에 name이 들어가있어서 그걸 비교해야함.
     return filteredArray[0]?.name === input ? [] : filteredArray;
