@@ -179,7 +179,7 @@ const DetailPage = () => {
   // console.log(pokemon.stats);
 
   return (
-    <article className="flex items-center gap-1 flex-col w-full">
+    <article className="flex gap-1 flex-col w-full">
       <div
         className={`${bg} w-auto h-full flex flex-col z-0 items-center justify-end relative overflow-hidden`}
       >
