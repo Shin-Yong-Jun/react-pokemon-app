@@ -42,6 +42,7 @@ const DetailPage = () => {
         const DamageRelations = await Promise.all(
           types.map(async (i) => {
             const type = await axios.get(i.type.url);
+            console.log('@@@@@', JSON.stringify(type.data));
             return type.data.damage_relations;
           })
         );
@@ -61,7 +62,7 @@ const DetailPage = () => {
           //await을 넣어줘야 데이터가 다 들어오는걸 기다린 다음에 반영시키는 것!
           describtion: await getPokemonDescribtion(id)
         };
-        console.log(formattedPokemonData)
+        
 
         setPokemon(formattedPokemonData);
         setIsLoading(false);
@@ -95,7 +96,7 @@ const DetailPage = () => {
     const url = `https://pokeapi.co/api/v2/pokemon-species/${id}/`
 
     const {data: pokemonSpecies} = await axios.get(url);
-    console.log(pokemonSpecies);
+    // console.log('@@@@@@@@@',JSON.stringify(pokemonSpecies));
 
     const describtions = filterAndFormatDescribtion(pokemonSpecies.flavor_text_entries);
 
