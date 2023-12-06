@@ -1,6 +1,12 @@
-import React from "react";
+import React from 'react'
 
-const Type = ({ type, damageValue }) => {
+interface TypeProps {
+  type: String;
+  damageValue?: String; 
+}
+
+
+const Type = ({ type, damageValue }: TypeProps) => {
   const bg = `bg-${type}`;
 
   return (

@@ -24,7 +24,6 @@ const NavBar = () => {
 useEffect(() => {
 
   const unsubscribe = onAuthStateChanged(auth, (user) => {
-      console.log(user);
       if(!user) {
         navigate("/login");
       } else if (user && pathname === "/login") {
@@ -32,8 +31,6 @@ useEffect(() => {
       }
     })
 
-    console.log(unsubscribe)
-  
     return () => {
       unsubscribe();
 

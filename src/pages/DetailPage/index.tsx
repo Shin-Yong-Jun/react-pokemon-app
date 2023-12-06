@@ -185,7 +185,6 @@ const DetailPage = () => {
   const bg = `bg-${pokemon?.types?.[0]}`;
   const text = `text-${pokemon?.types?.[0]}`;
 
-
   if(!isLoading && pokemon) {
 
     return (
