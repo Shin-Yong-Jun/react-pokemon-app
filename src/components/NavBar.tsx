@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components'
 // 구글 파이어베이스 관련
-import {getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut} from 'firebase/auth';
+import {User, getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut} from 'firebase/auth';
 import app from '../firebase';
 
+const userDataFromStorage = localStorage.getItem('userData')
 
-const initialUserData = localStorage.getItem('userData') ?
-  JSON.parse(localStorage.getItem('userData')) : {};
+const initialUserData = userDataFromStorage ? JSON.parse(userDataFromStorage) : null;
 
 const NavBar = () => {
 
@@ -16,7 +16,7 @@ const NavBar = () => {
   const provider = new GoogleAuthProvider();
   const [show, setShow] = useState(false);
 
-  const [userData, setUserData] = useState(initialUserData);
+  const [userData, setUserData] = useState<User | null>(initialUserData);
 
   const {pathname} = useLocation();
   const navigate = useNavigate();
@@ -69,7 +69,7 @@ useEffect(() => {
   const handleLogout = () => {
     signOut(auth)
       .then(()=> {
-        setUserData({});
+        setUserData(null);
     })
     .catch(error => {
       alert(error.message);
@@ -90,10 +90,15 @@ useEffect(() => {
       <Login onClick={handleAuth}>로그인</Login>
     ) : 
       <SignOut>
+        {userData?.photoURL
+        &&
         <UserImg 
           src={userData.photoURL}
           alt="user photo"
         />
+        
+        
+        }
         <Dropdown>
           <span onClick={handleLogout}> Sign Out </span>
         </Dropdown>
@@ -184,7 +189,7 @@ const Logo = styled.a`
   }
 `
 
-const NavWrapper = styled.nav`
+const NavWrapper = styled.nav<{show: boolean}>`
   position: fixed;
   top: 0;
   left: 0;
