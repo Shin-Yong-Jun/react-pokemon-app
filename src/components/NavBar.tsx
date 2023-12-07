@@ -4,10 +4,9 @@ import styled from 'styled-components'
 // 구글 파이어베이스 관련
 import {User, getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut} from 'firebase/auth';
 import app from '../firebase';
+import storage from '../utils/storage';
 
-const userDataFromStorage = localStorage.getItem('userData')
-
-const initialUserData = userDataFromStorage ? JSON.parse(userDataFromStorage) : null;
+const initialUserData = storage.get<User>('userData')
 
 const NavBar = () => {
 
@@ -42,7 +41,8 @@ useEffect(() => {
     signInWithPopup(auth, provider)
     .then(result => {
       setUserData(result.user);
-      localStorage.setItem("userData", JSON.stringify(result.user))
+      storage.set('userData', result.user);
+      // localStorage.setItem("userData", JSON.stringify(result.user))
     })
     .catch(error => {
       console.error(error);
@@ -69,6 +69,7 @@ useEffect(() => {
   const handleLogout = () => {
     signOut(auth)
       .then(()=> {
+        storage.remove('userData');
         setUserData(null);
     })
     .catch(error => {
